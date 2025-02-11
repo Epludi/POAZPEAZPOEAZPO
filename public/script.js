@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function validateWebhook() {
     webhookUrl = webhookInput.value.trim();
-    // Retiré la vérification startsWith pour accepter n'importe quelle URL
+    // Suppression de la vérification du format de l'URL pour accepter toute URL
     try {
       const response = await fetch(webhookUrl);
       if (!response.ok) throw new Error("Invalid Webhook");
