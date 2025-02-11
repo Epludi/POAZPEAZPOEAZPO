@@ -24,6 +24,20 @@ body {
   z-index: 10;
 }
 
+/* Header avec logo et titre côte à côte */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.logo {
+  width: 50px; /* Ajustez la taille du logo ici */
+  height: auto;
+}
+
 /* Neige */
 @keyframes snow {
   0% {
@@ -160,8 +174,8 @@ body {
 /* Footer Text fixé en bas du container */
 .footer-text {
   position: absolute;
-  bottom: 18px;
-  left: 44%;
+  bottom: 20px;
+  left: 50%;
   transform: translateX(-50%);
   text-align: center;
   opacity: 0;
