@@ -1,0 +1,248 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+    const webhookInput = document.getElementById("webhook-input");
+    const submitBtn = document.getElementById("submit-btn");
+    const buttonContainer = document.getElementById("button-container");
+    const infoContainer = document.getElementById("info-container");
+    const editContainer = document.getElementById("edit-container");
+    const messagesContainer = document.getElementById("messages-container");
+    const deleteContainer = document.getElementById("delete-container");
+    const notification = document.getElementById("notification");
+
+    const webhookAvatar = document.getElementById("webhook-avatar");
+    const webhookName = document.getElementById("webhook-name");
+    const webhookId = document.getElementById("webhook-id");
+    const webhookToken = document.getElementById("webhook-token");
+    const webhookGuild = document.getElementById("webhook-guild");
+    const webhookChannel = document.getElementById("webhook-channel");
+
+    const infoBtn = document.getElementById("info-btn");
+    const editBtn = document.getElementById("edit-btn");
+    const messagesBtn = document.getElementById("messages-btn");
+    const deleteBtn = document.getElementById("delete-btn");
+
+    const editWebhookName = document.getElementById("edit-webhook-name");
+    const editWebhookAvatar = document.getElementById("edit-webhook-avatar");
+    const avatarPreview = document.getElementById("avatar-preview");
+    const saveEditBtn = document.getElementById("save-edit-btn");
+
+    const messageInput = document.getElementById("message-input");
+    const delayInput = document.getElementById("delay-input");
+    const startStopBtn = document.getElementById("start-stop-btn");
+
+    let messageInterval = null;
+    let isSending = false;
+
+    // Notification function: slide in from right, then slide out after 3 seconds.
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.style.right = "20px";
+        setTimeout(() => {
+            notification.style.right = "-300px";
+        }, 3000);
+    }
+
+    // Copy to clipboard functionality.
+    document.querySelectorAll(".copyable").forEach(element => {
+        element.addEventListener("click", () => {
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification("Copied to clipboard!");
+            });
+        });
+    });
+
+    // Validate webhook on submit.
+    submitBtn.addEventListener("click", async () => {
+        const webhookURL = webhookInput.value.trim();
+        const webhookRegex = /^https:\/\/discord\.com\/api\/webhooks\/(\d+)\/([\w-]+)$/;
+        if (!webhookRegex.test(webhookURL)) {
+            showNotification("Webhook invalid!");
+            return;
+        }
+        try {
+            const response = await fetch(webhookURL);
+            if (!response.ok) throw new Error("Invalid webhook");
+            const data = await response.json();
+
+            // Update info container with real webhook data from API.
+            webhookAvatar.src = data.avatar
+                ? `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png?size=128`
+                : "https://cdn.discordapp.com/embed/avatars/0.png";
+            webhookName.textContent = data.name;
+            webhookId.textContent = `ID: ${data.id}`;
+            webhookToken.textContent = `Token: ${data.token}`;
+            webhookGuild.textContent = `Guild ID: ${data.guild_id}`;
+            webhookChannel.textContent = `Channel ID: ${data.channel_id}`;
+
+            // Animate fade-out of input and submit button, then show management content.
+            webhookInput.style.opacity = "0";
+            submitBtn.style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("welcome-screen").style.display = "none";
+                // Show nav buttons and info container
+                buttonContainer.classList.remove("hidden");
+                infoContainer.classList.remove("hidden");
+                infoContainer.classList.add("visible");
+                showNotification("Webhook valid!");
+            }, 500);
+        } catch (error) {
+            console.error(error);
+            showNotification("Webhook invalid!");
+        }
+    });
+
+    // Navigation: Info button shows info container.
+    infoBtn.addEventListener("click", () => {
+        infoContainer.classList.remove("hidden");
+        editContainer.classList.add("hidden");
+        messagesContainer && messagesContainer.classList.add("hidden");
+        deleteContainer && deleteContainer.classList.add("hidden");
+    });
+
+    // Navigation: Edit button shows edit container.
+    editBtn.addEventListener("click", () => {
+        editContainer.classList.remove("hidden");
+        infoContainer.classList.add("hidden");
+        messagesContainer && messagesContainer.classList.add("hidden");
+        deleteContainer && deleteContainer.classList.add("hidden");
+        // Pre-fill edit fields with current info.
+        editWebhookName.value = webhookName.textContent;
+    });
+
+    // Preview avatar selection
+    editWebhookAvatar.addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                avatarPreview.src = e.target.result;
+                avatarPreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Save Edit: update webhook via PATCH request.
+    saveEditBtn.addEventListener("click", async () => {
+        const webhookURL = webhookInput.value.trim(); // Not available anymore; need to store URL?
+        // We'll assume we stored the webhookURL globally after validation.
+        const currentWebhookURL = window.currentWebhookURL;
+        if (!currentWebhookURL) {
+            showNotification("No webhook URL stored.");
+            return;
+        }
+        const newName = editWebhookName.value.trim();
+        const avatarFile = editWebhookAvatar.files[0];
+
+        let avatarBase64 = null;
+        if (avatarFile) {
+            const reader = new FileReader();
+            reader.readAsDataURL(avatarFile);
+            await new Promise(resolve => { reader.onload = resolve; });
+            avatarBase64 = reader.result.split(',')[1];
+        }
+
+        const payload = {
+            name: newName,
+            avatar: avatarBase64 ? `data:image/png;base64,${avatarBase64}` : null
+        };
+
+        const idTokenMatch = currentWebhookURL.match(/webhooks\/(\d+)\/([\w-]+)/);
+        if (!idTokenMatch) {
+            showNotification("Invalid webhook URL stored.");
+            return;
+        }
+        const id = idTokenMatch[1];
+        const token = idTokenMatch[2];
+        const apiUrl = `https://discord.com/api/webhooks/${id}/${token}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const updatedData = await response.json();
+            if (response.ok) {
+                webhookName.textContent = updatedData.name;
+                webhookAvatar.src = updatedData.avatar
+                    ? `https://cdn.discordapp.com/avatars/${updatedData.id}/${updatedData.avatar}.png?size=128`
+                    : webhookAvatar.src;
+                showNotification("Webhook updated successfully!");
+                infoContainer.classList.remove("hidden");
+                editContainer.classList.add("hidden");
+            } else {
+                showNotification("Error updating webhook.");
+            }
+        } catch (error) {
+            console.error("Error updating webhook:", error);
+            showNotification("Error updating webhook.");
+        }
+    });
+
+    // Messaging functionality
+    document.getElementById("start-stop-btn")?.addEventListener("click", async () => {
+        const currentWebhookURL = window.currentWebhookURL;
+        if (!currentWebhookURL) return;
+        const message = document.getElementById("message-input").value;
+        const delay = parseInt(document.getElementById("delay-input").value) || 100;
+        const startStopBtn = document.getElementById("start-stop-btn");
+
+        if (!isSending) {
+            isSending = true;
+            startStopBtn.textContent = "Stop";
+            messageInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(currentWebhookURL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: message }),
+                    });
+                    if (response.ok) {
+                        showNotification("Message sent");
+                    } else if (response.status === 429) {
+                        showNotification("You are being rate limited");
+                    }
+                } catch (error) {
+                    console.error("Error sending message:", error);
+                }
+            }, delay);
+        } else {
+            isSending = false;
+            clearInterval(messageInterval);
+            startStopBtn.textContent = "Start";
+        }
+    });
+
+    // Delete webhook functionality
+    document.getElementById("delete-btn").addEventListener("click", async () => {
+        if (confirm("Are you sure you want to delete this webhook?")) {
+            const currentWebhookURL = window.currentWebhookURL;
+            if (!currentWebhookURL) return;
+            const idTokenMatch = currentWebhookURL.match(/webhooks\/(\d+)\/([\w-]+)/);
+            const id = idTokenMatch[1];
+            const token = idTokenMatch[2];
+            const apiUrl = `https://discord.com/api/webhooks/${id}/${token}`;
+            try {
+                const response = await fetch(apiUrl, { method: 'DELETE' });
+                if (response.ok) {
+                    showNotification("Webhook deleted");
+                    location.reload();
+                } else {
+                    showNotification("Error deleting webhook.");
+                }
+            } catch (error) {
+                console.error("Error deleting webhook:", error);
+                showNotification("Error deleting webhook.");
+            }
+        }
+    });
+
+    // Store the webhook URL after validation for further use (e.g., editing, messaging)
+    window.currentWebhookURL = "";
+    submitBtn.addEventListener("click", () => {
+        window.currentWebhookURL = document.getElementById("webhook-input").value.trim();
+    });
+});
