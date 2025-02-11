@@ -1,61 +1,71 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Webhook Manager</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Webhook Manager</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">AntiSkidSquad</h1>
-        <h2 class="subtitle">Skid activities will not be tolerated.</h2>
+  <!-- Fond de neige placé derrière le contenu -->
+  <div class="snow"></div>
 
-        <div class="webhook-input-container">
-            <input type="text" id="webhook-url" class="webhook-input" placeholder="Enter Webhook URL">
-            <button id="validate-webhook" class="checkmark-button">✔</button>
-        </div>
+  <div class="container">
+    <h1 class="title">AntiSkidSquad</h1>
+    <h2 class="subtitle">Skid activities will not be tolerated.</h2>
 
-        <div class="nav-buttons">
-            <button class="nav-button" data-section="info">ℹ️ Info</button>
-            <button class="nav-button" data-section="edit">✏️ Edit</button>
-            <button class="nav-button" data-section="messages">💬 Messages</button>
-            <button class="nav-button" data-section="delete">🗑 Delete</button>
-        </div>
-
-        <div id="info" class="container-section">
-            <h3>Avatar</h3>
-            <img id="webhook-avatar" src="" alt="Webhook Avatar" width="80">
-            <p><strong>Name:</strong> <span id="webhook-name"></span></p>
-            <p><strong>ID:</strong> <span id="webhook-id"></span></p>
-            <p><strong>Guild ID:</strong> <span id="guild-id"></span></p>
-            <p><strong>Channel ID:</strong> <span id="channel-id"></span></p>
-        </div>
-
-        <div id="edit" class="container-section hidden">
-          <input type="text" id="edit-name" class="input-field" placeholder="New Name">
-          <input type="file" id="edit-avatar" class="file-upload" style="display:none;">
-          <button class="upload-button" onclick="document.getElementById('edit-avatar').click();">Upload Avatar</button>
-          <img id="avatar-preview" style="display:none; margin-top: 10px; max-width: 100px;">
-          <button id="apply-changes" class="apply-button">Apply Changes</button>
-      </div>
-      
-
-        <div id="messages" class="container-section">
-            <h3>Send Messages</h3>
-            <input type="text" id="message-text" class="input-field" placeholder="Enter message">
-            <input type="number" id="message-delay" class="input-field" placeholder="Delay in ms">
-            <button id="start-messages" class="apply-button">Start</button>
-        </div>
-
-        <div id="delete" class="container-section">
-            <h3>Delete Webhook</h3>
-            <button id="delete-webhook" class="delete-button">Delete Webhook</button>
-        </div>
-
-        <div id="notification" class="notification"></div>
+    <div class="webhook-input-container">
+      <input type="text" id="webhook-url" class="webhook-input" placeholder="Enter Webhook URL">
+      <button id="validate-webhook" class="checkmark-button">✔</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Texte du footer fixé en bas du container -->
+    <div class="footer-text">
+      <p class="dev-info">Developed and designed by <span>@fmtg</span></p>
+      <p class="dev-status">Still in development</p>
+    </div>
+
+    <div class="nav-buttons hidden">
+      <button class="nav-button" data-section="info">ℹ️ Info</button>
+      <button class="nav-button" data-section="edit">✏️ Edit</button>
+      <button class="nav-button" data-section="messages">💬 Messages</button>
+      <button class="nav-button" data-section="delete">🗑 Delete</button>
+    </div>
+
+    <div id="info" class="container-section">
+      <h3 style="text-align: center;">Avatar</h3>
+      <div class="avatar-wrapper">
+        <img id="webhook-avatar" src="" alt="Webhook Avatar">
+      </div>
+      <p><strong>Name:</strong> <span id="webhook-name"></span></p>
+      <p><strong>ID:</strong> <span id="webhook-id"></span></p>
+      <p><strong>Guild ID:</strong> <span id="guild-id"></span></p>
+      <p><strong>Channel ID:</strong> <span id="channel-id"></span></p>
+    </div>
+
+    <div id="edit" class="container-section hidden">
+      <input type="text" id="edit-name" class="input-field" placeholder="New Name">
+      <input type="file" id="edit-avatar" class="file-upload" style="display:none;">
+      <button class="upload-button" onclick="document.getElementById('edit-avatar').click();">Upload Avatar</button>
+      <img id="avatar-preview" style="display:none; margin-top: 10px; max-width: 100px;">
+      <button id="apply-changes" class="apply-button">Apply Changes</button>
+    </div>
+
+    <div id="messages" class="container-section hidden">
+      <h3>Send Messages</h3>
+      <input type="text" id="message-text" class="input-field" placeholder="Enter message">
+      <input type="number" id="message-delay" class="input-field" placeholder="Delay in ms">
+      <button id="start-messages" class="apply-button">Start</button>
+    </div>
+
+    <div id="delete" class="container-section hidden">
+      <h3>Delete Webhook</h3>
+      <button id="delete-webhook" class="delete-button">Delete Webhook</button>
+    </div>
+
+    <div id="notification" class="notification"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
