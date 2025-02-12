@@ -24,7 +24,6 @@ body {
   z-index: 10;
 }
 
-/* Header avec logo et titre côte à côte */
 .header {
   display: flex;
   align-items: center;
@@ -34,7 +33,7 @@ body {
 }
 
 .logo {
-  width: 50px; /* Ajustez la taille du logo ici */
+  width: 50px; 
   height: auto;
 }
 
@@ -65,7 +64,7 @@ body {
 
 .snowflake {
   position: absolute;
-  top: -10px; /* Apparition juste au-dessus de l'écran */
+  top: -10px; 
   background-color: white;
   border-radius: 50%;
   opacity: 0.8;
@@ -112,26 +111,24 @@ body {
   animation-delay: -5s;
 }
 
-/* Titres et sous-titres */
 .title {
   font-size: 3rem;
   font-weight: 700;
   text-align: center;
   animation: fadeInTitle 1s ease-in-out;
   z-index: 2;
-  margin-top: 50px; /* Ajustez pour descendre le titre */
+  margin-top: 50px; 
 }
 
 .subtitle {
   font-size: 1.5rem;
   font-weight: 300;
   text-align: center;
-  margin-top: 40px; /* Ajustez pour descendre le sous-titre */
+  margin-top: 40px; 
   animation: fadeInTitle 1.5s ease-in-out;
   z-index: 2;
 }
 
-/* Input Webhook */
 .webhook-input-container {
   display: flex;
   align-items: center;
@@ -171,7 +168,6 @@ body {
   background: #ddd;
 }
 
-/* Footer Text fixé en bas du container */
 .footer-text {
   position: absolute;
   bottom: 18px;
@@ -239,7 +235,6 @@ body {
   }
 }
 
-/* Boutons de navigation */
 .nav-buttons {
   display: flex;
   gap: 15px;
@@ -269,7 +264,6 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Containers */
 .container-section {
   margin-top: 20px;
   padding: 20px;
@@ -337,7 +331,6 @@ body {
   background: darkblue;
 }
 
-/* Bouton Stop pour l'envoi des messages */
 .btn-stop {
   background: red !important;
   color: white !important;
@@ -390,13 +383,11 @@ body {
   border-radius: 50%;
 }
 
-/* Wrapper pour centrer l'avatar dans Info */
 .avatar-wrapper {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* Style de l'avatar dans Info */
 #webhook-avatar {
   width: 80px;
   height: 80px;
