@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let webhookUrl = "";
   let webhookData = {};
 
-  // Création des flocons de neige
   function createSnowflake() {
     const snowflake = document.createElement("div");
     snowflake.classList.add("snowflake");
@@ -28,13 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
     snowflake.style.left = leftPosition + "px";
     snowflake.style.width = size + "px";
     snowflake.style.height = size + "px";
-    // S'assurer que le flocon spawn en haut
     snowflake.style.top = "-10px";
-    // Durée d'animation aléatoire
     snowflake.style.animationDuration = (Math.random() * 5 + 5) + "s";
     
     document.querySelector(".snow").appendChild(snowflake);
-    // Supprimer le flocon après 10s
     setTimeout(() => {
       snowflake.remove();
     }, 10000);
@@ -57,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function validateWebhook() {
     webhookUrl = webhookInput.value.trim();
-    // Suppression de la vérification du format de l'URL pour accepter toute URL
     try {
       const response = await fetch(webhookUrl);
       if (!response.ok) throw new Error("Invalid Webhook");
@@ -78,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         validateButton.classList.add("hidden");
         navButtons.classList.add("visible");
         infoContainer.classList.add("active");
-        editContainer.classList.remove("active"); // Cache le container Edit dès le début
+        editContainer.classList.remove("active");
       }, 500);
 
       showNotification("Webhook Valid");
@@ -102,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
         sectionToShow.classList.add("active");
       }
 
-      // Si Edit est cliqué, afficher Edit et masquer Info
       if (sectionId === "edit") {
         editContainer.classList.add("active");
         infoContainer.classList.remove("active");
@@ -110,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Aperçu de l'avatar téléchargé
   document.getElementById("edit-avatar").addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -124,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Appliquer les changements (nom et avatar)
   document.getElementById("apply-changes").addEventListener("click", async () => {
     const newName = document.getElementById("edit-name").value.trim();
     const avatarFile = document.getElementById("edit-avatar").files[0];
@@ -164,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Gestion du bouton Start/Stop pour l'envoi des messages
   const startStopBtn = document.getElementById("start-messages");
   let sending = false;
   startStopBtn.addEventListener("click", async () => {
